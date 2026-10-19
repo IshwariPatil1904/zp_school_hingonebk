@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-green: #176638;
+  --dark-green: #14532D;
+  --hero-green: #103D27;
+  --saffron-orange: #FFA500;
+  --bg-white: #FFFFFF;
+  --light-green: #F4F7F4;
+  --main-text: #24352A;
+  --muted-text: #5A6E61;
+  --border-green: #E1E8E1;
+}
+
+.dark {
+  --primary-green: #267A48;
+  --dark-green: #14251C;
+  --hero-green: #0E1F15;
+  --saffron-orange: #FFA500;
+  --bg-white: #111827;
+  --light-green: #18251F;
+  --main-text: #F9FAFB;
+  --muted-text: #D1D5DB;
+  --border-green: #374151;
+}
+
+body {
+  background-color: var(--bg-white);
+  color: var(--main-text);
+  font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Explicit Dark Mode Overrides to guarantee no white leaks */
+.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+.dark body,
+[data-theme='dark'] body {
+  background-color: #111827 !important;
+  color: #F9FAFB !important;
+}
+
+.dark main,
+[data-theme='dark'] main {
+  background-color: #111827 !important;
+}
+
+.dark .bg-white:not([data-keep-light]),
+[data-theme='dark'] .bg-white:not([data-keep-light]) {
+  background-color: #1F2937 !important;
+  color: #F9FAFB !important;
+}
+
+.dark .bg-light-green,
+[data-theme='dark'] .bg-light-green {
+  background-color: #18251F !important;
+}
+
+.dark .bg-light-green\/40,
+.dark .bg-light-green\/30,
+[data-theme='dark'] .bg-light-green\/40,
+[data-theme='dark'] .bg-light-green\/30 {
+  background-color: #18251F !important;
+}
+
+.dark .text-main-text,
+[data-theme='dark'] .text-main-text {
+  color: #F9FAFB !important;
+}
+
+.dark .text-muted-text,
+[data-theme='dark'] .text-muted-text {
+  color: #D1D5DB !important;
+}
+
+.dark .border-border-green,
+[data-theme='dark'] .border-border-green {
+  border-color: #374151 !important;
+}
+
+.dark .shadow-card,
+[data-theme='dark'] .shadow-card {
+  background-color: #1F2937 !important;
+  border-color: #374151 !important;
+  color: #F9FAFB !important;
+}
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-green);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4D3C4;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-green);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--saffron-orange);
+  outline-offset: 2px;
+}
+
+/* Safe Print Styles for Certificates & Reports */
+@media print {
+  .dark {
+    color-scheme: light;
+  }
+  .dark body,
+  .dark .printable-content,
+  .dark #printable-area,
+  .dark [data-printable='true'] {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+}

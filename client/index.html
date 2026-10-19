@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zilla Parishad Primary School, Hingone BK | जि. प. प्राथमिक शाळा, हिंगोणे बु.</title>
+    <meta name="description" content="Official Portal of Zilla Parishad Primary School, Hingone BK, Taluka Dharangaon, District Jalgaon, Maharashtra. Quality rural education, Mid-day meals, sports, and holistic development." />
+    <!-- Google Fonts: Inter and Noto Sans Devanagari for bilingual typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('zp_theme');
+          var isDark = theme === 'dark' || ((!theme || theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+          var lang = localStorage.getItem('zp_language') || 'en';
+          document.documentElement.lang = lang === 'mr' ? 'mr' : 'en';
+
+          document.addEventListener('DOMContentLoaded', function() {
+            if (isDark && document.body) {
+              document.body.classList.add('dark');
+              document.body.setAttribute('data-theme', 'dark');
+            }
+          });
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-white dark:bg-[#111827] text-main-text dark:text-dark-text font-sans antialiased selection:bg-saffron-orange selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
