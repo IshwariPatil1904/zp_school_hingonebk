@@ -1,0 +1,4 @@
+{
+  "installCommand": "npm ci --include=dev && npm ci --prefix server --include=dev && npm ci --prefix client --include=dev",
+  "buildCommand": "npm run build"
+}
