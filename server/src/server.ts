@@ -1,16 +1,18 @@
 import app from './app';
 import { connectDB } from './config/db';
-import { ENV } from './config/env';
+import { ENV, assertRequiredEnv } from './config/env';
 import { runBootstrap } from './scripts/bootstrap';
 
 const startServer = async () => {
   try {
+    assertRequiredEnv('MONGODB_URI', 'JWT_SECRET', 'COOKIE_SECRET');
     await connectDB();
 
-    // Ensure principal account and teachers are bootstrapped
-    await runBootstrap();
+    if (ENV.NODE_ENV !== 'production') {
+      await runBootstrap();
+    }
 
-    const PORT = parseInt(ENV.PORT, 10) || 5000;
+    const PORT = Number(ENV.PORT) || 5000;
     app.listen(PORT, () => {
       console.log(`====================================================`);
       console.log(`  Zilla Parishad Primary School, Hingone BK API`);

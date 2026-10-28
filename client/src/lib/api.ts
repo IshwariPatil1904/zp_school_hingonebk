@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL || import.meta.env.API_URL || '/api';
+
 export const getCookie = (name: string): string | null => {
   if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
@@ -7,7 +9,7 @@ export const getCookie = (name: string): string | null => {
 };
 
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: apiBaseUrl,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

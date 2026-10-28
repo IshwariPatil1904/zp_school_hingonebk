@@ -1,13 +1,20 @@
 import mongoose from 'mongoose';
-import { ENV } from './env';
+import { ENV, assertRequiredEnv } from './env';
 
 export const connectDB = async (): Promise<void> => {
   try {
-    const conn = await mongoose.connect(ENV.MONGODB_URI);
+    assertRequiredEnv('MONGODB_URI');
+
+    const conn = await mongoose.connect(ENV.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      autoIndex: true,
+    });
+
     console.log(`[MongoDB] Connected successfully to host: ${conn.connection.host}, database: ${conn.connection.name}`);
   } catch (error) {
-    console.error('[MongoDB] Connection error:', error);
-    process.exit(1);
+    console.error('[MongoDB] Connection error:');
+    console.error(error instanceof Error ? error.message : error);
+    throw error;
   }
 };
 

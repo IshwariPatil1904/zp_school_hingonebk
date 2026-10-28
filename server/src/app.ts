@@ -9,47 +9,55 @@ import routes from './routes';
 import { errorHandler, AppError } from './middleware/error.middleware';
 
 const app: Application = express();
+const allowedOrigins = Array.from(
+  new Set([
+    ENV.CLIENT_URL,
+    ENV.FRONTEND_URL,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+  ].filter(Boolean))
+);
 
-// Security Headers
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
 
-// CORS configuration for cookies and client domain
 app.use(
   cors({
-    origin: [ENV.CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origin ${origin} not allowed by CORS.`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
   })
 );
 
-// Logging
 if (ENV.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Body and Cookie Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser(ENV.COOKIE_SECRET));
+app.use(cookieParser(ENV.COOKIE_SECRET || 'development-cookie-secret'));
 
-// Serve static images directly from imgs directory as fallback
 const imgsDirectory = path.resolve(__dirname, '../../imgs');
 app.use('/imgs', express.static(imgsDirectory));
 
-// Mount API routes
 app.use('/api', routes);
 
-// 404 Route handler
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find route: ${req.method} ${req.originalUrl} on this server!`, 404));
 });
 
-// Centralized error handling
 app.use(errorHandler);
 
 export default app;

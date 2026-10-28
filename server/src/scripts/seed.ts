@@ -14,6 +14,10 @@ import { evaluateAllSchemes } from '../services/scholarshipEligibility.service';
 
 const seedDatabase = async () => {
   try {
+    if (!ENV.MONGODB_URI) {
+      throw new Error('MONGODB_URI is required to seed the database.');
+    }
+
     console.log('[Seed] Connecting to MongoDB:', ENV.MONGODB_URI);
     await mongoose.connect(ENV.MONGODB_URI);
     console.log('[Seed] Connected.');
@@ -31,13 +35,20 @@ const seedDatabase = async () => {
     await ScholarshipEligibility.deleteMany({});
     console.log('[Seed] Cleared existing records.');
 
+    const principalSeedPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD;
+    const teacherSeedPassword = ENV.BOOTSTRAP_TEACHER_PASSWORD;
+
+    if (!principalSeedPassword || !teacherSeedPassword) {
+      throw new Error('BOOTSTRAP_PRINCIPAL_PASSWORD and BOOTSTRAP_TEACHER_PASSWORD are required to seed demo staff accounts.');
+    }
+
     // 1. Staff Accounts (Principal & Teachers with rich approved public profiles)
     const users = [
       {
         name: 'Shri. S. R. Patil',
         email: 'principal@zphingone.edu.in',
         username: 'principal',
-        password: 'Principal@123',
+        password: principalSeedPassword,
         role: 'principal' as const,
         phone: '+91 98234 56789',
         designation: 'Headmaster (मुख्याध्यापक)',
@@ -55,7 +66,7 @@ const seedDatabase = async () => {
         name: 'Smt. K. N. Pawar',
         email: 'teacher.pawar@zphingone.edu.in',
         username: 'teacher.pawar',
-        password: 'Teacher@123',
+        password: teacherSeedPassword,
         role: 'teacher' as const,
         phone: '+91 98765 43210',
         designation: 'Senior Primary Teacher (वरिष्ठ प्राथमिक शिक्षिका)',
@@ -73,7 +84,7 @@ const seedDatabase = async () => {
         name: 'Shri. R. V. Shinde',
         email: 'teacher.shinde@zphingone.edu.in',
         username: 'teacher.shinde',
-        password: 'Teacher@123',
+        password: teacherSeedPassword,
         role: 'teacher' as const,
         phone: '+91 98111 22233',
         designation: 'Mathematics & Science Specialist (गणित व विज्ञान विषय शिक्षक)',
@@ -91,7 +102,7 @@ const seedDatabase = async () => {
         name: 'Shri. M. P. Patil',
         email: 'teacher.patil@zphingone.edu.in',
         username: 'teacher.patil',
-        password: 'Teacher@123',
+        password: teacherSeedPassword,
         role: 'teacher' as const,
         phone: '+91 98333 44455',
         designation: 'Primary Teacher & Sports In-charge (क्रीडा प्रमुख शिक्षक)',
@@ -109,7 +120,7 @@ const seedDatabase = async () => {
         name: 'Smt. S. S. Bhadane',
         email: 'teacher.bhadane@zphingone.edu.in',
         username: 'teacher.bhadane',
-        password: 'Teacher@123',
+        password: teacherSeedPassword,
         role: 'teacher' as const,
         phone: '+91 98444 55566',
         designation: 'Language & Digital Literacy Teacher (भाषा व संगणक शिक्षिका)',

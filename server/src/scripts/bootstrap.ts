@@ -10,7 +10,15 @@ export const runBootstrap = async (): Promise<void> => {
       await mongoose.connect(ENV.MONGODB_URI);
     }
 
-    // Check if a principal already exists
+    const principalName = ENV.BOOTSTRAP_PRINCIPAL_NAME || 'Shri. S. R. Patil';
+    const principalEmail = (ENV.BOOTSTRAP_PRINCIPAL_EMAIL || 'principal@zphingone.edu.in').toLowerCase().trim();
+    const principalUsername = (ENV.BOOTSTRAP_PRINCIPAL_USERNAME || 'principal').toLowerCase().trim();
+    const principalPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD;
+
+    if (!principalPassword) {
+      throw new Error('BOOTSTRAP_PRINCIPAL_PASSWORD is required to initialize the initial principal account.');
+    }
+
     const existingPrincipal = await User.findOne({ role: 'principal' });
 
     if (existingPrincipal) {
@@ -19,10 +27,10 @@ export const runBootstrap = async (): Promise<void> => {
       console.log('[Bootstrap] No principal account found. Initializing primary administrative account...');
 
       const principalData = {
-        name: process.env.BOOTSTRAP_PRINCIPAL_NAME || 'Shri. S. R. Patil',
-        email: (process.env.BOOTSTRAP_PRINCIPAL_EMAIL || 'principal@zphingone.edu.in').toLowerCase().trim(),
-        username: (process.env.BOOTSTRAP_PRINCIPAL_USERNAME || 'principal').toLowerCase().trim(),
-        password: process.env.BOOTSTRAP_PRINCIPAL_PASSWORD || 'Principal@123',
+        name: principalName,
+        email: principalEmail,
+        username: principalUsername,
+        password: principalPassword,
         role: 'principal' as const,
         phone: '+91 98234 56789',
         designation: 'Headmaster / मुख्याध्यापक',
@@ -34,13 +42,17 @@ export const runBootstrap = async (): Promise<void> => {
       console.log(`[Bootstrap] Successfully created Principal account: ${principalData.email}`);
     }
 
-    // Ensure sample teacher accounts exist
+    const teacherPassword = ENV.BOOTSTRAP_TEACHER_PASSWORD;
+    if (!teacherPassword) {
+      throw new Error('BOOTSTRAP_TEACHER_PASSWORD is required to initialize teacher demo accounts.');
+    }
+
     const teachers = [
       {
         name: 'Smt. K. N. Pawar',
         email: 'teacher.pawar@zphingone.edu.in',
         username: 'teacher.pawar',
-        password: 'Teacher@123',
+        password: teacherPassword,
         role: 'teacher' as const,
         phone: '+91 98765 43210',
         designation: 'Senior Primary Teacher (इयत्ता १ व २)',
@@ -58,7 +70,7 @@ export const runBootstrap = async (): Promise<void> => {
         name: 'Shri. R. V. Shinde',
         email: 'teacher.shinde@zphingone.edu.in',
         username: 'teacher.shinde',
-        password: 'Teacher@123',
+        password: teacherPassword,
         role: 'teacher' as const,
         phone: '+91 98111 22233',
         designation: 'Science & Mathematics Specialist (इयत्ता ३ व ४)',
