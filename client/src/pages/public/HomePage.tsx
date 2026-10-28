@@ -233,12 +233,12 @@ export const HomePage: React.FC = () => {
               <div className="w-64 sm:w-72 rounded-2xl overflow-hidden shadow-card-hover border-4 border-white dark:border-[#374151] ring-2 ring-primary-green/20 bg-light-green dark:bg-dark-card">
                 <img
                   src="/imgs/principal.jpeg"
-                  alt="Headmaster Shri. S. R. Patil"
+                  alt="Headmaster Ajaykumar Patil"
                   className="w-full h-80 object-cover object-top"
                 />
                 <div className="p-3 bg-primary-green text-white text-center">
                   <h3 className="font-bold text-sm">
-                    {tBilingual('श्री. एस. आर. पाटील', 'Shri. S. R. Patil')}
+                    {tBilingual('अजयकुमार पाटील', 'Ajaykumar Patil')}
                   </h3>
                   <p className="text-xs text-white/80">
                     {tBilingual('मुख्याध्यापक • जि. प. शाळा हिंगोणे बु.', 'Principal • ZP School Hingone BK')}

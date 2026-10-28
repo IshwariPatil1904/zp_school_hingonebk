@@ -10,7 +10,7 @@ export const runBootstrap = async (): Promise<void> => {
       await mongoose.connect(ENV.MONGODB_URI);
     }
 
-    const principalName = ENV.BOOTSTRAP_PRINCIPAL_NAME || 'Shri. S. R. Patil';
+    const principalName = ENV.BOOTSTRAP_PRINCIPAL_NAME || 'Ajaykumar Patil';
     const principalEmail = (ENV.BOOTSTRAP_PRINCIPAL_EMAIL || 'principal@zphingone.edu.in').toLowerCase().trim();
     const principalUsername = (ENV.BOOTSTRAP_PRINCIPAL_USERNAME || 'principal').toLowerCase().trim();
     const principalPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD;
@@ -49,7 +49,7 @@ export const runBootstrap = async (): Promise<void> => {
 
     const teachers = [
       {
-        name: 'Smt. K. N. Pawar',
+        name: 'Ujwala Pawar',
         email: 'teacher.pawar@zphingone.edu.in',
         username: 'teacher.pawar',
         password: teacherPassword,

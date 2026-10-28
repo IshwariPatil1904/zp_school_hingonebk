@@ -151,7 +151,7 @@ export const AboutPage: React.FC = () => {
             <div className="lg:col-span-3 flex justify-center">
               <img
                 src="/imgs/principal.jpeg"
-                alt="Headmaster Shri. S. R. Patil"
+                alt="Headmaster Ajaykumar Patil"
                 className="w-48 h-56 rounded-xl object-cover object-top shadow border-2 border-white dark:border-[#374151]"
               />
             </div>
@@ -160,7 +160,7 @@ export const AboutPage: React.FC = () => {
                 {tBilingual('मुख्याध्यापकांचा संदेश', "Headmaster's Message")}
               </Badge>
               <h3 className="text-xl font-bold text-main-text dark:text-dark-text">
-                {tBilingual('श्री. एस. आर. पाटील • मुख्याध्यापक', 'Shri. S. R. Patil • Headmaster')}
+                {tBilingual('अजयकुमार पाटील • मुख्याध्यापक', 'Ajaykumar Patil • Headmaster')}
               </h3>
               <p className="text-xs sm:text-sm text-main-text/85 dark:text-dark-muted leading-relaxed">
                 {profile?.headmaster.message ||
@@ -258,7 +258,7 @@ export const AboutPage: React.FC = () => {
                 {tBilingual('सचिव', 'Secretary')}
               </span>
               <span className="text-muted-text dark:text-dark-muted text-[11px] block mt-0.5">
-                {tBilingual('श्री. एस. आर. पाटील (मुख्याध्यापक)', 'Shri. S. R. Patil (Principal)')}
+                {tBilingual('अजयकुमार पाटील (मुख्याध्यापक)', 'Ajaykumar Patil (Principal)')}
               </span>
             </div>
             <div className="bg-white dark:bg-dark-card p-3.5 rounded-xl border border-border-green dark:border-dark-border shadow-sm">

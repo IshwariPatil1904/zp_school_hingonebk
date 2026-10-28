@@ -9,6 +9,7 @@
     "dev:client": "npm --prefix client run dev",
     "seed": "npm --prefix server run seed",
     "bootstrap": "npm --prefix server run bootstrap",
+    "update:staff-names": "npm --prefix server run update:staff-names --",
     "build:server": "npm --prefix server run build",
     "build:client": "npm --prefix client run build",
     "vercel:install": "npm ci --include=dev && npm ci --prefix server --include=dev && npm ci --prefix client --include=dev",

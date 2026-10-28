@@ -45,7 +45,7 @@ const seedDatabase = async () => {
     // 1. Staff Accounts (Principal & Teachers with rich approved public profiles)
     const users = [
       {
-        name: 'Shri. S. R. Patil',
+        name: 'Ajaykumar Patil',
         email: 'principal@zphingone.edu.in',
         username: 'principal',
         password: principalSeedPassword,
@@ -63,7 +63,7 @@ const seedDatabase = async () => {
         },
       },
       {
-        name: 'Smt. K. N. Pawar',
+        name: 'Ujwala Pawar',
         email: 'teacher.pawar@zphingone.edu.in',
         username: 'teacher.pawar',
         password: teacherSeedPassword,

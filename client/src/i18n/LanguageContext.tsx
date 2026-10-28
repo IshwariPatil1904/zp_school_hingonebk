@@ -21,6 +21,10 @@ const HAS_DEVANAGARI = /[\u0900-\u097F]/;
 
 // Known teacher names dictionary
 const TEACHER_NAMES_MAP: Record<string, { mr: string; en: string }> = {
+  'Ajaykumar Patil': { mr: 'अजयकुमार पाटील', en: 'Ajaykumar Patil' },
+  'अजयकुमार पाटील': { mr: 'अजयकुमार पाटील', en: 'Ajaykumar Patil' },
+  'Ujwala Pawar': { mr: 'उज्वला पवार', en: 'Ujwala Pawar' },
+  'उज्वला पवार': { mr: 'उज्वला पवार', en: 'Ujwala Pawar' },
   'श्री. एस. आर. पाटील': { mr: 'श्री. एस. आर. पाटील', en: 'Shri. S. R. Patil' },
   'Shri. S. R. Patil': { mr: 'श्री. एस. आर. पाटील', en: 'Shri. S. R. Patil' },
   'श्री. रमेश वसंत पवार': { mr: 'श्री. रमेश वसंत पवार', en: 'Shri. Ramesh Vasant Pawar' },

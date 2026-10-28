@@ -141,7 +141,7 @@ const SchoolWebsiteConfigSchema = new Schema<ISchoolWebsiteConfig>(
       },
     },
     principalMessage: {
-      displayName: { type: String, default: 'Shri. S. R. Patil' },
+      displayName: { type: String, default: 'Ajaykumar Patil' },
       designation: { type: String, default: 'Headmaster (मुख्याध्यापक)' },
       qualification: { type: String, default: 'M.A., D.Ed. (२२ वर्षे शैक्षणिक अनुभव)' },
       photo: { type: String, default: '/imgs/principal.jpeg' },

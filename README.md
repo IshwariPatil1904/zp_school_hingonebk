@@ -79,6 +79,16 @@ npm --prefix server run test:rbac
 npm run seed
 ```
 
+### 5. Updating the production staff display names
+
+After confirming the root `.env` uses the intended production `MONGODB_URI`, run:
+
+```powershell
+npm run update:staff-names -- --confirm
+```
+
+This one-time update changes the principal and `teacher.pawar` account names, the linked teacher roster name, and the CMS principal display name. It does not change usernames, email addresses, passwords, or other staff data.
+
 ---
 
 ## 🌐 URLs & Endpoints
@@ -105,6 +115,7 @@ Configure these for the Production environment in Vercel (and Preview if preview
 - `COOKIE_SECRET`: long, random secret used to sign cookies.
 - `BLOB_READ_WRITE_TOKEN`: read/write token for the Vercel Blob store used by CMS photo uploads.
 - `NODE_ENV`: `production`.
+- `MONGODB_URI` must point to a MongoDB deployment accessible from Vercel (not a local MongoDB instance). Check Atlas Network Access / Vercel egress configuration if connection attempts time out.
 
 Set `CLIENT_URL` to the deployed site URL if the frontend and API are on different domains. With the same-domain Vercel setup, the API is routed under `/api`.
 

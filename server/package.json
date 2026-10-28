@@ -9,6 +9,7 @@
     "dev": "tsx watch src/server.ts",
     "seed": "tsx src/scripts/seed.ts",
     "bootstrap": "tsx src/scripts/bootstrap.ts",
+    "update:staff-names": "tsx src/scripts/update-staff-names.ts",
     "test:rbac": "tsx src/scripts/test-rbac.ts",
     "test:modules": "tsx src/scripts/test-students-teachers.ts",
     "test:finance": "tsx src/scripts/test-finances.ts",
