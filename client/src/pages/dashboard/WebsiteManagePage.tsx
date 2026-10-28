@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { upload } from '@vercel/blob/client';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/common/Card';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { api } from '../../lib/api';
+import { api, getCookie } from '../../lib/api';
 import {
   Globe,
   School,
@@ -456,13 +457,38 @@ export const WebsiteManagePage: React.FC = () => {
 
     setUploading(true);
     try {
-      const res = await api.post('/portal/website/media/upload', {
-        title: uploadTitle.trim(),
-        fileName: uploadFile.name,
-        category: uploadCategory,
-        mimeType: uploadFile.type,
-        base64Data: uploadBase64,
-      });
+      let res;
+      if (import.meta.env.DEV) {
+        res = await api.post('/portal/website/media/upload', {
+          title: uploadTitle.trim(),
+          fileName: uploadFile.name,
+          category: uploadCategory,
+          mimeType: uploadFile.type,
+          base64Data: uploadBase64,
+        });
+      } else {
+        const safeFileName = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const pathname = `school-photos/${Date.now()}_${safeFileName}`;
+        const blob = await upload(pathname, uploadFile, {
+          access: 'public',
+          handleUploadUrl: '/api/portal/website/media/upload/token',
+          clientPayload: JSON.stringify({
+            title: uploadTitle.trim(),
+            originalName: uploadFile.name,
+            category: uploadCategory,
+          }),
+          headers: {
+            'X-CSRF-Token': getCookie('csrfToken') || '',
+          },
+        });
+
+        res = await api.post('/portal/website/media/upload/register', {
+          pathname: blob.pathname,
+          title: uploadTitle.trim(),
+          originalName: uploadFile.name,
+          category: uploadCategory,
+        });
+      }
 
       if (res.data?.success) {
         showFeedback('success', 'छायाचित्र यशस्वीरीत्या अपलोड व संचयित झाले!');

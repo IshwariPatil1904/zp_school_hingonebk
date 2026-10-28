@@ -91,3 +91,28 @@ npm run seed
 - **Certificates Management**: `http://localhost:5173/dashboard/certificates`
 - **Profile & Change Password**: `http://localhost:5173/dashboard/settings`
 - **Backend API Health Check**: `http://localhost:5000/api/auth/health`
+
+---
+
+## 🚀 Production Deployment on Vercel
+
+### Required Vercel environment variables
+
+Configure these for the Production environment in Vercel (and Preview if previews need to use the API):
+
+- `MONGODB_URI`: MongoDB Atlas connection string for the database that contains the school's records.
+- `JWT_SECRET`: long, random secret used to sign login tokens.
+- `COOKIE_SECRET`: long, random secret used to sign cookies.
+- `BLOB_READ_WRITE_TOKEN`: read/write token for the Vercel Blob store used by CMS photo uploads.
+- `NODE_ENV`: `production`.
+
+Set `CLIENT_URL` to the deployed site URL if the frontend and API are on different domains. With the same-domain Vercel setup, the API is routed under `/api`.
+
+### Keeping existing data and photos
+
+- Vercel deployments do not include a local MongoDB database. Point `MONGODB_URI` to the existing Atlas database, or migrate the local MongoDB data to Atlas before deployment.
+- **Do not run `npm run seed` against production.** The seed script deletes existing collections before inserting development sample data.
+- Built-in school photos are deployed from `client/public/imgs`. Photos added through the CMS are uploaded directly to Vercel Blob and their URLs/metadata are stored in MongoDB.
+- Files previously uploaded to a local `client/public/imgs/uploads` folder are not automatically migrated. Keep a backup of those files and upload them again through the CMS after configuring Blob storage.
+
+After adding or changing environment variables in Vercel, redeploy so the API functions receive them.

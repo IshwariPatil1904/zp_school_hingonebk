@@ -88,6 +88,8 @@ import {
   toggleScholarshipVisibility,
   updateTeacherPublicProfile,
   getMediaAssets,
+  createMediaUploadToken,
+  registerMediaUpload,
   uploadMediaAsset,
   getCmsAuditLogs,
 } from '../controllers/websiteCms.controller';
@@ -245,6 +247,8 @@ router.put('/website/teachers/:id', csrfProtection, requirePermission('website:m
 
 // Media Library and validated image uploads (CMS)
 router.get('/website/media', requirePermission('website:manage'), getMediaAssets);
+router.post('/website/media/upload/token', csrfProtection, requirePermission('website:manage'), createMediaUploadToken);
+router.post('/website/media/upload/register', csrfProtection, requirePermission('website:manage'), registerMediaUpload);
 router.post('/website/media/upload', csrfProtection, requirePermission('website:manage'), uploadMediaAsset);
 
 // CMS Audit Trail

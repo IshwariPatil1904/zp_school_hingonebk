@@ -8,8 +8,57 @@ import { User } from '../models/User.model';
 import { Teacher } from '../models/Teacher.model';
 import { MediaAsset } from '../models/MediaAsset.model';
 import { AuditLog } from '../models/AuditLog.model';
+import { head } from '@vercel/blob';
+import { handleUpload } from '@vercel/blob/client';
+import { AppError } from '../middleware/error.middleware';
 import fs from 'fs';
 import path from 'path';
+
+const mediaUploadMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+const mediaUploadCategories = ['gallery', 'principal', 'school', 'notice', 'activity', 'other'];
+const maxMediaUploadBytes = 5 * 1024 * 1024;
+const mediaUploadPathPattern = /^school-photos\/[A-Za-z0-9._-]+$/;
+
+interface MediaUploadMetadata {
+  title: string;
+  originalName: string;
+  category: (typeof mediaUploadCategories)[number];
+}
+
+const parseMediaUploadMetadata = (clientPayload: string | null): MediaUploadMetadata => {
+  if (!clientPayload) {
+    throw new AppError('छायाचित्र अपलोडची माहिती आवश्यक आहे.', 400);
+  }
+
+  let metadata: unknown;
+  try {
+    metadata = JSON.parse(clientPayload);
+  } catch {
+    throw new AppError('छायाचित्र अपलोडची माहिती अवैध आहे.', 400);
+  }
+
+  if (!metadata || typeof metadata !== 'object') {
+    throw new AppError('छायाचित्र अपलोडची माहिती अवैध आहे.', 400);
+  }
+
+  const { title, originalName, category } = metadata as Record<string, unknown>;
+  if (
+    typeof title !== 'string' ||
+    !title.trim() ||
+    typeof originalName !== 'string' ||
+    !originalName.trim() ||
+    typeof category !== 'string' ||
+    !mediaUploadCategories.includes(category)
+  ) {
+    throw new AppError('शीर्षक, फाईल नाव व वैध विभाग आवश्यक आहेत.', 400);
+  }
+
+  return {
+    title: title.trim(),
+    originalName: originalName.trim(),
+    category: category as MediaUploadMetadata['category'],
+  };
+};
 
 /**
  * Helper to ensure a default SchoolWebsiteConfig document exists
@@ -582,6 +631,92 @@ export const updateTeacherPublicProfile = async (
   }
 };
 
+export const createMediaUploadToken = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      throw new AppError('Vercel Blob is not configured. Set BLOB_READ_WRITE_TOKEN in the deployment environment.', 503);
+    }
+
+    const result = await handleUpload({
+      request: req,
+      body: req.body,
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        parseMediaUploadMetadata(clientPayload);
+
+        if (!mediaUploadPathPattern.test(pathname)) {
+          throw new AppError('छायाचित्र फाईलचा मार्ग अवैध आहे.', 400);
+        }
+
+        return {
+          allowedContentTypes: mediaUploadMimeTypes,
+          maximumSizeInBytes: maxMediaUploadBytes,
+          addRandomSuffix: true,
+        };
+      },
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const registerMediaUpload = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      throw new AppError('Vercel Blob is not configured. Set BLOB_READ_WRITE_TOKEN in the deployment environment.', 503);
+    }
+
+    const { pathname, title, originalName, category } = req.body;
+    const metadata = parseMediaUploadMetadata(JSON.stringify({ title, originalName, category }));
+
+    if (typeof pathname !== 'string' || !mediaUploadPathPattern.test(pathname)) {
+      throw new AppError('अपलोड केलेल्या छायाचित्राचा मार्ग अवैध आहे.', 400);
+    }
+
+    const blob = await head(pathname);
+    if (!mediaUploadMimeTypes.includes(blob.contentType) || blob.size > maxMediaUploadBytes) {
+      throw new AppError('केवळ ५ MB पेक्षा कमी आकाराची वैध JPEG, PNG किंवा WEBP छायाचित्रे अनुमत आहेत.', 400);
+    }
+
+    const asset = await MediaAsset.create({
+      title: metadata.title,
+      originalName: metadata.originalName,
+      fileName: blob.pathname,
+      url: blob.url,
+      mimeType: blob.contentType,
+      sizeBytes: blob.size,
+      category: metadata.category,
+      uploadedBy: req.user?.name || 'मुख्याध्यापक',
+    });
+
+    await AuditLog.create({
+      action: 'UPLOAD_MEDIA',
+      entityType: 'MediaAsset',
+      entityId: asset._id.toString(),
+      performedBy: req.user?.name || 'मुख्याध्यापक',
+      performedByRole: 'principal',
+      details: `नवीन छायाचित्र '${asset.title}' (आकार: ${Math.round(blob.size / 1024)} KB) अपलोड केले.`,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'छायाचित्र यशस्वीरीत्या अपलोड झाले!',
+      data: asset,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 /**
  * 10. Media Assets & Validated Upload Endpoint
  */
@@ -643,6 +778,10 @@ export const uploadMediaAsset = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      throw new AppError('Production photo uploads must use the persistent Vercel Blob storage flow.', 503);
+    }
+
     const { title, fileName, category = 'gallery', base64Data, mimeType = 'image/jpeg' } = req.body;
 
     if (!title || !fileName || !base64Data) {
