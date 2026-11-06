@@ -19,8 +19,9 @@ export const connectDB = async (): Promise<void> => {
     assertRequiredEnv('MONGODB_URI');
 
     connectionPromise = mongoose.connect(ENV.MONGODB_URI, {
+      dbName: 'zp_school',
       serverSelectionTimeoutMS: 10000,
-      autoIndex: true,
+      autoIndex: ENV.NODE_ENV !== 'production',
     });
 
     const conn = await connectionPromise;

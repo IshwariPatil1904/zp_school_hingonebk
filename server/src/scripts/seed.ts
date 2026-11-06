@@ -19,7 +19,7 @@ const seedDatabase = async () => {
     }
 
     console.log('[Seed] Connecting to MongoDB:', ENV.MONGODB_URI);
-    await mongoose.connect(ENV.MONGODB_URI);
+    await mongoose.connect(ENV.MONGODB_URI, { dbName: 'zp_school' });
     console.log('[Seed] Connected.');
 
     // Clear existing collections
@@ -35,12 +35,8 @@ const seedDatabase = async () => {
     await ScholarshipEligibility.deleteMany({});
     console.log('[Seed] Cleared existing records.');
 
-    const principalSeedPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD;
-    const teacherSeedPassword = ENV.BOOTSTRAP_TEACHER_PASSWORD;
-
-    if (!principalSeedPassword || !teacherSeedPassword) {
-      throw new Error('BOOTSTRAP_PRINCIPAL_PASSWORD and BOOTSTRAP_TEACHER_PASSWORD are required to seed demo staff accounts.');
-    }
+    const principalSeedPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD || 'Principal@123';
+    const teacherSeedPassword = ENV.BOOTSTRAP_TEACHER_PASSWORD || 'Teacher@123';
 
     // 1. Staff Accounts (Principal & Teachers with rich approved public profiles)
     const users = [

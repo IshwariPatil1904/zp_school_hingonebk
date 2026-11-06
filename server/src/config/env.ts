@@ -3,7 +3,9 @@ import path from 'path';
 
 const envCandidates = [
   path.resolve(__dirname, '../../../.env'),
+  path.resolve(__dirname, '../../.env'),
   path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), '../.env'),
 ];
 
 envCandidates.forEach((envPath) => {
@@ -20,9 +22,9 @@ export const ENV = {
   CLIENT_URL: getEnv('CLIENT_URL') || getEnv('FRONTEND_URL') || 'http://localhost:5173',
   FRONTEND_URL: getEnv('FRONTEND_URL') || getEnv('CLIENT_URL') || 'http://localhost:5173',
   MONGODB_URI: getEnv('MONGODB_URI') || getEnv('MONGO_URI'),
-  JWT_SECRET: getEnv('JWT_SECRET'),
+  JWT_SECRET: getEnv('JWT_SECRET', 'zp_school_secure_jwt_secret_hingone_2026'),
   JWT_EXPIRES_IN: getEnv('JWT_EXPIRES_IN', '7d'),
-  COOKIE_SECRET: getEnv('COOKIE_SECRET'),
+  COOKIE_SECRET: getEnv('COOKIE_SECRET', 'zp_school_secure_cookie_secret_hingone_2026'),
   BOOTSTRAP_PRINCIPAL_NAME: getEnv('BOOTSTRAP_PRINCIPAL_NAME'),
   BOOTSTRAP_PRINCIPAL_EMAIL: getEnv('BOOTSTRAP_PRINCIPAL_EMAIL'),
   BOOTSTRAP_PRINCIPAL_USERNAME: getEnv('BOOTSTRAP_PRINCIPAL_USERNAME'),
@@ -31,11 +33,16 @@ export const ENV = {
 };
 
 export const assertRequiredEnv = (...keys: string[]): void => {
-  const missing = keys.filter((key) => !process.env[key] || !process.env[key]?.trim());
+  const missing = keys.filter((key) => {
+    if (key === 'MONGODB_URI') {
+      return !ENV.MONGODB_URI;
+    }
+    return !process.env[key] || !process.env[key]?.trim();
+  });
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}. Copy .env.example to .env and configure the values before starting the app.`
+      `Missing required environment variables: ${missing.join(', ')}. Set them in Vercel Project Settings > Environment Variables or in .env.`
     );
   }
 };

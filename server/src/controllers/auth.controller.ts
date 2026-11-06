@@ -87,8 +87,15 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
  * Clears authentication and CSRF cookies
  */
 export const logout = (req: Request, res: Response): void => {
-  res.clearCookie('token', { httpOnly: true, path: '/' });
-  res.clearCookie('csrfToken', { httpOnly: false, path: '/' });
+  const isProduction = ENV.NODE_ENV === 'production';
+  const cookieOptions = {
+    path: '/',
+    secure: isProduction,
+    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+  };
+
+  res.clearCookie('token', { ...cookieOptions, httpOnly: true });
+  res.clearCookie('csrfToken', { ...cookieOptions, httpOnly: false });
 
   res.status(200).json({
     success: true,

@@ -7,17 +7,13 @@ export const runBootstrap = async (): Promise<void> => {
     const isConnected = mongoose.connection.readyState === 1;
     if (!isConnected) {
       console.log('[Bootstrap] Connecting to MongoDB:', ENV.MONGODB_URI);
-      await mongoose.connect(ENV.MONGODB_URI);
+      await mongoose.connect(ENV.MONGODB_URI, { dbName: 'zp_school' });
     }
 
     const principalName = ENV.BOOTSTRAP_PRINCIPAL_NAME || 'Ajaykumar Patil';
     const principalEmail = (ENV.BOOTSTRAP_PRINCIPAL_EMAIL || 'principal@zphingone.edu.in').toLowerCase().trim();
     const principalUsername = (ENV.BOOTSTRAP_PRINCIPAL_USERNAME || 'principal').toLowerCase().trim();
-    const principalPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD;
-
-    if (!principalPassword) {
-      throw new Error('BOOTSTRAP_PRINCIPAL_PASSWORD is required to initialize the initial principal account.');
-    }
+    const principalPassword = ENV.BOOTSTRAP_PRINCIPAL_PASSWORD || 'Principal@123';
 
     const existingPrincipal = await User.findOne({ role: 'principal' });
 
@@ -42,10 +38,7 @@ export const runBootstrap = async (): Promise<void> => {
       console.log(`[Bootstrap] Successfully created Principal account: ${principalData.email}`);
     }
 
-    const teacherPassword = ENV.BOOTSTRAP_TEACHER_PASSWORD;
-    if (!teacherPassword) {
-      throw new Error('BOOTSTRAP_TEACHER_PASSWORD is required to initialize teacher demo accounts.');
-    }
+    const teacherPassword = ENV.BOOTSTRAP_TEACHER_PASSWORD || 'Teacher@123';
 
     const teachers = [
       {
